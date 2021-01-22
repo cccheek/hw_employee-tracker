@@ -25,12 +25,14 @@ connection.connect((err) => {
 
 function initialPrompt() {
     inquirer.prompt({
+
         type: "list",
         name: "choice",
         message: "What would you like to do?",
         choices: ["Add Department", "Add Role", "Add Employee", "View Department", "View Role", "View Employee", "Update Employee", "Quit"]
+
     }).then((choice) => {
-        switch (choice) {
+        switch (choice.choice) {
             case "Add Department":
                 addDepartment()
                 break;
@@ -68,29 +70,73 @@ function initialPrompt() {
 };
 
 function addDepartment() {
+    inquirer.prompt({
 
-}
+        type: "input",
+        name: "addDepartment",
+        message: "Which department would you like to add?"
+
+    }).then((ans) => {
+
+        connection.query("INSERT INTO department (name) VALUES (?)", [ans.addDepartment], (err, res) => {
+            if (err) throw err;
+            console.log(`"${ans.addDepartment}" added as new Department`);
+        });
+
+    });
+};
 
 function addRole() {
 
-}
+    const depIds = [];
 
-function addEmployee() {
+    connection.query("SELECT id, name FROM department;", (err, res) => {
+        if (err) throw err;
 
-}
+        for (i in res) {
+            newOb = {};
+            newOb.id = res[i].id;
+            newOb.name = res[i].name;
+            depIds.push(newOb);
+        }
 
-function viewDepartment() {
+        inquirer.prompt(
+            [{
 
-}
+                type: "input",
+                name: "addTitle",
+                message: "What is the title of the role would you like to add?"
 
-function viewRole() {
+            },
+            {
 
-}
+                type: "number",
+                name: "addSalary",
+                message: "What is the salary for this position?"
 
-function viewEmployee() {
+            },
+            {
 
-}
+                type: "list",
+                name: "addDepart",
+                choices: depIds,
+                message: "What department are you adding this role to?"
 
-function updateEmployee() {
+            }]
+        ).then((ans) => {
 
-}
+            let departIds;
+            for (i in depIds) {
+                if (depIds[i].name === ans.deptName) {
+                    departIds = depIds[i].id;
+                }
+            }
+
+            connection.query("INSERT INTO role (title), (salary), (department_id) VALUES (?, ? , ?)", [ans.addTitle, ans.addSalary, departIds], (err, res) => {
+                if (err) throw err;
+                console.log(`"${ans.addTitle}" added as new role, at "${ans.addSalary}", in "${departIds}" department.`);
+            });
+
+        });
+    });
+};
