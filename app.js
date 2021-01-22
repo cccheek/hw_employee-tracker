@@ -67,3 +67,30 @@ function initialPrompt() {
     });
 };
 
+function addDepartment() {
+
+}
+
+function addRole() {
+
+}
+
+function addEmployee() {
+
+}
+
+function viewDepartment() {
+
+}
+
+function viewRole() {
+
+}
+
+function viewEmployee() {
+
+}
+
+function updateEmployee() {
+
+}
